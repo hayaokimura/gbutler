@@ -68,5 +68,8 @@ class Route
             $res->write('OK');
             return $res;
         });
+        $app->get('/hello', function(){
+            echo 'Hello, ';
+        });
     }
 }
