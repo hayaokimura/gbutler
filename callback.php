@@ -1,6 +1,8 @@
 <?php
+$environment_json = file_get_contents("environment.json");
+$environment = json_decode($environment_json);
 
-$accessToken = 'bQQ9qFs3fZheXZZWbv03qVvUH3/HXCwTE/mSohThXLzQjFuO+QyVf2aEYB01zSU0OAcnGrnn3VDJSWy6Db3HBjA3ydpeSuM9aVIrc6+uWAAZqYptZgDMdqn2kR5FMLTPRReQTw70B2rVJd5+wWNMrQdB04t89/1O/w1cDnyilFU=';
+$accessToken = $environment->channel_access_token;
 
 $jsonString = file_get_contents('php://input');
 error_log($jsonString);
