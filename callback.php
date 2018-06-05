@@ -19,7 +19,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
     $inputData = file_get_contents("php://input");
     
-    $httpClient = new CurlHTTPClient($channel_access_token);
+    $httpClient = new CurlHTTPClient($accessToken);
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
     $Events = $bot->parseEventRequest($inputData, $signature);
