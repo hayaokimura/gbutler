@@ -24,7 +24,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $httpClient = new CurlHTTPClient($accessToken);
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
-    $event = $bot->parseEventRequest($inputData, $signature);
+    $Events = $bot->parseEventRequest($inputData, $signature);
     
     foreach ($Events as $event) {
         $sendMessage = new MultiMessageBuilder();
