@@ -1,12 +1,14 @@
 <?php
 
-require_once(__DIR__."/vendor/autoload.php");
+
 
 use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
 use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use \LINE\LINEBot\Constant\HTTPHeader;
+
+require_once(__DIR__."/vendor/autoload.php");
 
 //アクセストークンとシークレット取得
 $environment_json = file_get_contents("environment.json");
@@ -22,13 +24,12 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $httpClient = new CurlHTTPClient($accessToken);
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
-    $Events = $bot->parseEventRequest($inputData, $signature);
+    $event = $bot->parseEventRequest($inputData, $signature);
     
-    foreach ($Events as $event) {
-        $sendMessage = new MultiMessageBuilder();
-        $TextMessageBuilder = new TextMessageBuilder("Hello!");
-        $sendMessage->add($TextMessageBuilder);
-        $bot->replyMessage($event->getReqlyToken(), $sendMessage);
-    }
+    
+    $sendMessage = new MultiMessageBuilder();
+    $TextMessageBuilder = new TextMessageBuilder("Hello!");
+    $sendMessage->add($TextMessageBuilder);
+    $bot->replyMessage($event->getReqlyToken(), $sendMessage);
 }
 
