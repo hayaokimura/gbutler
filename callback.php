@@ -26,10 +26,11 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
     $event = $bot->parseEventRequest($inputData, $signature);
     
-    
-    $sendMessage = new MultiMessageBuilder();
-    $TextMessageBuilder = new TextMessageBuilder("Hello!");
-    $sendMessage->add($TextMessageBuilder);
-    $bot->replyMessage($event->getReqlyToken(), $sendMessage);
+    foreach ($Events as $event) {
+        $sendMessage = new MultiMessageBuilder();
+        $TextMessageBuilder = new TextMessageBuilder("Hello!");
+        $sendMessage->add($TextMessageBuilder);
+        $bot->replyMessage($event->getReplyToken(), $sendMessage);
+    }
 }
 
