@@ -28,7 +28,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
     foreach ($Events as $event) {
         $sendMessage = new MultiMessageBuilder();
-        $TextMessageBuilder = new TextMessageBuilder("Hello!");
+        $TextMessageBuilder = new TextMessageBuilder($event->getText());
         $sendMessage->add($TextMessageBuilder);
         $bot->replyMessage($event->getReplyToken(), $sendMessage);
     }
