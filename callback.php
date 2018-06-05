@@ -1,128 +1,34 @@
 <?php
+
+require_once(__DIR__."/vendor/autoload.php");
+
+use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
+use \LINE\LINEBot;
+use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
+use \LINE\LINEBot\Constant\HTTPHeader;
+
+//アクセストークンとシークレット取得
 $environment_json = file_get_contents("environment.json");
 $environment = json_decode($environment_json);
 
 $accessToken = $environment->channel_access_token;
+$channelSecret = $environment->channel_secret;
 
-$jsonString = file_get_contents('php://input');
-error_log($jsonString);
-$jsonObj = json_decode($jsonString);
-
-$message = $jsonObj->{"events"}[0]->{"message"};
-$replyToken = $jsonObj->{"events"}[0]->{"replyToken"};
-
-// 送られてきたメッセージの中身からレスポンスのタイプを選択
-if ($message->{"text"} == '確認') {
-    // 確認ダイアログタイプ
-    $messageData = [
-        'type' => 'template',
-        'altText' => '確認ダイアログ',
-        'template' => [
-            'type' => 'confirm',
-            'text' => '元気ですかー？',
-            'actions' => [
-                [
-                    'type' => 'message',
-                    'label' => '元気です',
-                    'text' => '元気です'
-                ],
-                [
-                    'type' => 'message',
-                    'label' => 'まあまあです',
-                    'text' => 'まあまあです'
-                ],
-            ]
-        ]
-    ];
-} elseif ($message->{"text"} == 'ボタン') {
-    // ボタンタイプ
-    $messageData = [
-        'type' => 'template',
-        'altText' => 'ボタン',
-        'template' => [
-            'type' => 'buttons',
-            'title' => 'タイトルです',
-            'text' => '選択してね',
-            'actions' => [
-                [
-                    'type' => 'postback',
-                    'label' => 'webhookにpost送信',
-                    'data' => 'value'
-                ],
-                [
-                    'type' => 'uri',
-                    'label' => 'googleへ移動',
-                    'uri' => 'https://google.com'
-                ]
-            ]
-        ]
-    ];
-} elseif ($message->{"text"} == 'カルーセル') {
-    // カルーセルタイプ
-    $messageData = [
-        'type' => 'template',
-        'altText' => 'カルーセル',
-        'template' => [
-            'type' => 'carousel',
-            'columns' => [
-                [
-                    'title' => 'カルーセル1',
-                    'text' => 'カルーセル1です',
-                    'actions' => [
-                        [
-                            'type' => 'postback',
-                            'label' => 'webhookにpost送信',
-                            'data' => 'value'
-                        ],
-                        [
-                            'type' => 'uri',
-                            'label' => '美容の口コミ広場を見る',
-                            'uri' => 'http://clinic.e-kuchikomi.info/'
-                        ]
-                    ]
-                ],
-                [
-                    'title' => 'カルーセル2',
-                    'text' => 'カルーセル2です',
-                    'actions' => [
-                        [
-                            'type' => 'postback',
-                            'label' => 'webhookにpost送信',
-                            'data' => 'value'
-                        ],
-                        [
-                            'type' => 'uri',
-                            'label' => '女美会を見る',
-                            'uri' => 'https://jobikai.com/'
-                        ]
-                    ]
-                ],
-            ]
-        ]
-    ];
-} else {
-    // それ以外は送られてきたテキストをオウム返し
-    $messageData = [
-        'type' => 'text',
-        'text' => $message->{"text"}
-    ];
+if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
+    
+    $inputData = file_get_contents("php://input");
+    
+    $httpClient = new CurlHTTPClient($channel_access_token);
+    $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
+    $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
+    $Events = $bot->parseEventRequest($inputData, $signature);
+    
+    foreach ($Events as $event) {
+        $sendMessage = new MultiMessageBuilder();
+        $TextMessageBuilder = new TextMessageBuilder("Hello!");
+        $sendMessage->add($TextMessageBuilder);
+        $bot->replyMessage($event->getReqlyToken(), $sendMessage);
+    }
 }
 
-$response = [
-    'replyToken' => $replyToken,
-    'messages' => [$messageData]
-];
-error_log(json_encode($response));
-
-$ch = curl_init('https://api.line.me/v2/bot/message/reply');
-curl_setopt($ch, CURLOPT_POST, true);
-curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($response));
-curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-    'Content-Type: application/json; charser=UTF-8',
-    'Authorization: Bearer ' . $accessToken
-));
-$result = curl_exec($ch);
-error_log($result);
-curl_close($ch);
