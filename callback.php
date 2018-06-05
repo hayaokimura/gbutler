@@ -27,8 +27,11 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $Events = $bot->parseEventRequest($inputData, $signature);
     
     foreach ($Events as $event) {
+        if ($event->getText() == "予定") {
+            $replyText = "今日の予定をお伝えします。\n今日の予定は";
+        }
         $sendMessage = new MultiMessageBuilder();
-        $TextMessageBuilder = new TextMessageBuilder($event->getText());
+        $TextMessageBuilder = new TextMessageBuilder($replyText);
         $sendMessage->add($TextMessageBuilder);
         $bot->replyMessage($event->getReplyToken(), $sendMessage);
     }
