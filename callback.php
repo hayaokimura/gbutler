@@ -29,6 +29,8 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     foreach ($Events as $event) {
         if ($event->getText() == "予定") {
             $replyText = "今日の予定をお伝えします。\n今日の予定は";
+        }else {
+            $replyText = $event->getText();
         }
         $sendMessage = new MultiMessageBuilder();
         $TextMessageBuilder = new TextMessageBuilder($replyText);
