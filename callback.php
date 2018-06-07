@@ -25,7 +25,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
     $Events = $bot->parseEventRequest($inputData, $signature);
-    $userId = $Events[0]->userId;
+    $userId = $Events[0]->getUserId();
     
     foreach ($Events as $event) {
         if ($event->getText() == "予定") {
