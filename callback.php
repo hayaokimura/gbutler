@@ -25,10 +25,11 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
     $Events = $bot->parseEventRequest($inputData, $signature);
+    $userId = $Events[0]->userId;
     
     foreach ($Events as $event) {
         if ($event->getText() == "予定") {
-            $replyText = "今日の予定をお伝えします。\n今日の予定は";
+            $replyText = "今日の予定をお伝えします。\n今日の予定は".$userId;
         }else {
             $replyText = $event->getText();
         }
