@@ -1,5 +1,7 @@
 <?php
 
+require_once(__DIR__."/vendor/autoload.php");
+
 use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
