@@ -11,7 +11,7 @@ include_once __DIR__ . '/function.php';
 date_default_timezone_set('Asia/Tokyo');
 
 //アクセストークンとシークレット取得
-[$accessToken,$channelSecret] = take_env_var();
+list($accessToken,$channelSecret) = take_env_var();
 
 if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
