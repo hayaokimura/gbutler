@@ -34,3 +34,16 @@ function reply_for_Events($bot, $Events){
         
     }
 }
+
+function client_init(){
+    $client = new Google_Client();
+    $client->setAuthConfig('client_secret.json');
+    $scopes = array(Google_Service_Calendar::CALENDAR_READONLY, Google_Service_Oauth2::USERINFO_PROFILE);
+    $client->addScope($scopes);
+    $client->setApprovalPrompt('force');
+    $client->setAccessType('offline');
+    $redirect_uri = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+    $client->setRedirectUri($redirect_uri);
+    
+    return $client;
+}
