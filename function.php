@@ -14,14 +14,23 @@ function take_env_var(){
 
 function reply_for_Events($bot, $Events){
     foreach ($Events as $event) {
-        if ($event->getText() == "予定") {
-            $replyText = "今日の予定をお伝えします。\n今日の予定は";
-        }else {
-            $replyText = $event->getText();
+        switch ($event->getType()) {
+            case 'text':
+                if ($event->getText() == "予定") {
+                    $replyText = "今日の予定をお伝えします。\n今日の予定は";
+                }else {
+                    $replyText = $event->getText();
+                }
+                $sendMessage = new MultiMessageBuilder();
+                $TextMessageBuilder = new TextMessageBuilder($replyText);
+                $sendMessage->add($TextMessageBuilder);
+                $bot->replyMessage($event->getReplyToken(), $sendMessage);
+                break;
+            
+            default:
+                # code...
+                break;
         }
-        $sendMessage = new MultiMessageBuilder();
-        $TextMessageBuilder = new TextMessageBuilder($replyText);
-        $sendMessage->add($TextMessageBuilder);
-        $bot->replyMessage($event->getReplyToken(), $sendMessage);
+        
     }
 }
