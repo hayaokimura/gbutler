@@ -1,7 +1,5 @@
 <?php
 
-
-
 use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
 use \LINE\LINEBot;
 use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
@@ -9,13 +7,11 @@ use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
 use \LINE\LINEBot\Constant\HTTPHeader;
 
 require_once(__DIR__."/vendor/autoload.php");
+include_once __DIR__ . '/function.php';
+date_default_timezone_set('Asia/Tokyo');
 
 //アクセストークンとシークレット取得
-$environment_json = file_get_contents("environment.json");
-$environment = json_decode($environment_json);
-
-$accessToken = $environment->channel_access_token;
-$channelSecret = $environment->channel_secret;
+[$accessToken,$channelSecret] = take_env_var();
 
 if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
