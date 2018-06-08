@@ -26,6 +26,16 @@ function reply_for_Events($bot, $Events){
                 $sendMessage->add($TextMessageBuilder);
                 $bot->replyMessage($event->getReplyToken(), $sendMessage);
                 break;
+            case 'follow'
+                
+                $sendMessage = new MultiMessageBuilder();
+                $TextMessageBuilder = new TextMessageBuilder($authUrl);
+                $sendMessage->add($TextMessageBuilder);
+                $bot->replyMessage($event->getReplyToken(), $sendMessage);
+                break;
+                break;
+            case 'unfollow'
+                break;
             
             default:
                 # code...
