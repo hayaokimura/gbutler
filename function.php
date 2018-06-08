@@ -1,5 +1,11 @@
 <?php
 
+use \LINE\LINEBot\HTTPClient\CurlHTTPClient;
+use \LINE\LINEBot;
+use \LINE\LINEBot\MessageBuilder\TextMessageBuilder;
+use LINE\LINEBot\MessageBuilder\MultiMessageBuilder;
+use \LINE\LINEBot\Constant\HTTPHeader;
+
 function take_env_var(){
     $environment_json = file_get_contents("environment.json");
     $environment = json_decode($environment_json);
