@@ -15,24 +15,18 @@ date_default_timezone_set('Asia/Tokyo');
 
 if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
-    $inputData = file_get_contents("php://input");
-    
+    //initialize
     $httpClient = new CurlHTTPClient($accessToken);
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
+    
+    //take events
+    $inputData = file_get_contents("php://input");
     $Events = $bot->parseEventRequest($inputData, $signature);
+    
+    //how to get userid
     $userId = $Events[0]->getUserId();
     
-    foreach ($Events as $event) {
-        if ($event->getText() == "予定") {
-            $replyText = "今日の予定をお伝えします。\n今日の予定は".$userId;
-        }else {
-            $replyText = $event->getText();
-        }
-        $sendMessage = new MultiMessageBuilder();
-        $TextMessageBuilder = new TextMessageBuilder($replyText);
-        $sendMessage->add($TextMessageBuilder);
-        $bot->replyMessage($event->getReplyToken(), $sendMessage);
-    }
+    reply_for_events($bot,$Events);
 }
 
