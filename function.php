@@ -12,7 +12,7 @@ function take_env_var(){
     return [$environment->channel_access_token,$environment->channel_secret];
 }
 
-function reply_for_Events($bot, $Events){
+function reply_for_Events($bot, $Events,$google_client){
     foreach ($Events as $event) {
         $type = $event->getType();
         if ($type == 'message') {
@@ -26,7 +26,8 @@ function reply_for_Events($bot, $Events){
             $sendMessage->add($TextMessageBuilder);
             $bot->replyMessage($event->getReplyToken(), $sendMessage);
         }elseif ($type == 'follow') {
-            $replyText = "登録ありがとうございます！";
+            $replyText = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
+                .$google_client->createAuthUrl();
             $sendMessage = new MultiMessageBuilder();
             $TextMessageBuilder = new TextMessageBuilder($replyText);
             $sendMessage->add($TextMessageBuilder);

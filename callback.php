@@ -29,6 +29,6 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     //how to get userid
     $userId = $Events[0]->getUserId();
     
-    reply_for_events($bot,$Events);
+    reply_for_events($bot,$Events,$google_client);
 }
 
