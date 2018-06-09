@@ -13,14 +13,17 @@ date_default_timezone_set('Asia/Tokyo');
 //アクセストークンとシークレット取得
 list($accessToken,$channelSecret) = take_env_var();
 
+$google_client = client_init();
+DB_init();
+
 if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
     //initialize
     $httpClient = new CurlHTTPClient($accessToken);
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
-    $google_client = client_init();
-    DB_init();
+    
+    
     
     //take events
     $inputData = file_get_contents("php://input");
