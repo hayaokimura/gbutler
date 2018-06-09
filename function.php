@@ -48,3 +48,15 @@ function client_init(){
     
     return $client;
 }
+
+function DB_init(){
+    ORM::configure('mysql:host=localhost;dbname=gbutler');
+    ORM::configure('username', 'gbutler');
+    ORM::configure('password', 'pR1mCvFCnSd4bMFk');
+    ORM::configure('driver_options', [
+        PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES utf8',
+        PDO::ATTR_EMULATE_PREPARES         => false,
+        PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+    ]);
+
+}

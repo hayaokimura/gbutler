@@ -20,6 +20,7 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
     $signature = $_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE];
     $google_client = client_init();
+    DB_init();
     
     //take events
     $inputData = file_get_contents("php://input");
