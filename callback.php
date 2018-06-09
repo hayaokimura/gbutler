@@ -36,12 +36,12 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
 }
 
 if (isset($_GET['code'])) {
-      $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
-      $client->setAccessToken($token);
+      $token = $google_client->fetchAccessTokenWithAuthCode($_GET['code']);
+      $google_client->setAccessToken($token);
       $user = ORM::for_table('user')->create();
       //takeUserId
       
-      $oauth2_service = new Google_Service_Oauth2($client);
+      $oauth2_service = new Google_Service_Oauth2($google_client);
       $userinfo = $oauth2_service->userinfo->get();
       $googleid = $userinfo->id;
       
