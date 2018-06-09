@@ -32,3 +32,39 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     reply_for_events($bot,$Events,$google_client);
 }
 
+if (isset($_GET['code'])) {
+      $token = $client->fetchAccessTokenWithAuthCode($_GET['code']);
+      $client->setAccessToken($token);
+      $user = ORM::for_table('user')->create();
+      //takeUserId
+      
+      $oauth2_service = new Google_Service_Oauth2($client);
+      $userinfo = $oauth2_service->userinfo->get();
+      $googleid = $userinfo->id;
+      
+      //make lineidbata
+      $string_length = 6;
+      $lineidbeta = null;
+      for( $i=0; $i<$string_length; $i++ )$lineidbeta .= random_int( 0, 9);
+      
+      $user_array  = array('lineid' => $lineidbeta,
+                           'google_id' => $googleid,
+                           'refresh_token' => $token["refresh_token"]);
+      $user->set($user_array);
+      $user->save();
+}
+
+?>
+<?php if(isset($_GET['code'])):?>
+<!doctype html>
+  <html>
+  <head>
+    <title>gbutler code</title>
+  </head>
+  <body>
+      <div class="code">
+        <?= $lineidbeta ?>
+      </div>
+  </body>
+  </html>
+<?php endif?>

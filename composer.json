@@ -2,6 +2,7 @@
     "require": {
         "linecorp/line-bot-sdk": "^2.3",
         "j4mie/idiorm": "^1.5",
-        "google/apiclient": "^2.0"
+        "google/apiclient": "^2.0",
+        "paragonie/random_compat": "<9.99"
     }
 }
