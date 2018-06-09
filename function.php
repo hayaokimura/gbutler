@@ -15,7 +15,7 @@ function take_env_var(){
 function reply_for_Events($bot, $Events){
     foreach ($Events as $event) {
         switch ($event->getType()) {
-            case 'text':
+            case 'message':
                 if ($event->getText() == "予定") {
                     $replyText = "今日の予定をお伝えします。\n今日の予定は";
                 }else {
