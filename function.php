@@ -27,6 +27,10 @@ function reply_for_Events($bot, $Events){
             $bot->replyMessage($event->getReplyToken(), $sendMessage);
         }elseif ($type == 'follow') {
             $replyText = "登録ありがとうございます！";
+            $sendMessage = new MultiMessageBuilder();
+            $TextMessageBuilder = new TextMessageBuilder($replyText);
+            $sendMessage->add($TextMessageBuilder);
+            $bot->replyMessage($event->getReplyToken(), $sendMessage);
         }
         
     }
