@@ -30,7 +30,17 @@ if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     $Events = $bot->parseEventRequest($inputData, $signature);
     
     //how to get userid
-    $userId = $Events[0]->getUserId();
+    $lineid = $Events[0]->getUserId();
+    
+    $user = ORM::for_table('user')->where("lineid",$lineid)->find_one();
+    if ($user) {
+        $token =$google_client->fetchAccessTokenWithRefreshToken($user->refresh_token);
+        if (array_key_exists("refresh_token", $token)) {
+          $google_client->setAccessToken($token);
+        }else{
+          $user->delete();
+        }
+    }
     
     reply_for_events($bot,$Events,$google_client);
 }
