@@ -45,13 +45,13 @@ function reply_for_Events($bot, $Events,$google_client){
                     }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
                         $today = new DateTime(date("Y/m/d 00:00:00"));
                         $format = "Ymd";
-                        $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText());
+                        $start_datetime = DateTime::createFromFormat($format, $today->format('Y').$event->getText());
                         if ($today > $start) {
-                            $start = strtotime("+1 year", $start->getTimestamp());
+                            $start = strtotime("+1 year", $start_datetime->getTimestamp());
                         }else{
-                            $start = $start->getTimestamp();
+                            $start = $start_datetime->getTimestamp();
                         }
-                        $end = strtotime("+1 day", $start->getTimestamp());
+                        $end = strtotime("+1 day", $start_datetime->getTimestamp());
                         $replyText = schedule($google_client,$start,$end);
                     }else {
                         $replyText = $event->getText();
