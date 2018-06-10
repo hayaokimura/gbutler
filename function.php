@@ -64,7 +64,7 @@ function reply_for_Events($bot, $Events,$google_client){
     }
 }
 
-function take_calendar($client){
+function schedule($client){
     $client->getAccessToken();
     $calendar = new Google_Service_Calendar($client);
   
@@ -82,8 +82,8 @@ function take_calendar($client){
         'timeMax' => date('c',$tomorrow),
       );
       $event_list = $calendar->events->listEvents($calendarId, $optParams);
-      $return = null
-      if (empty($event_list->getItems()) {
+      $return = null;
+      if (empty($event_list->getItems())) {
           return "今日の予定はありません。";
       }else{
           $return = "今日の予定をお伝えします。\n今日の予定は\n";
