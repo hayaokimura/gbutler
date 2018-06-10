@@ -27,16 +27,16 @@ function reply_for_Events($bot, $Events,$google_client){
             }else{
                 $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
                 if ($user) {
-                    if ($event->getText() == "予定") {
-                    $reply_schedule = schedule($google_client);
-                    $replyText = $reply_schedule;
-                    
+                    $mecab = new MeCab_Tagger();
+                    $words = $mecab->split($event->getText());
+                    if (array_intersect($words, ["予定"])) {
+                        $reply_schedule = schedule($google_client);
+                        $replyText = $reply_schedule;
                     }else {
                         $replyText = $event->getText();
                     }
                 }else{
-                    $replyText = "まだ連携ができていません！\n
-                    こちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
+                    $replyText = "まだ連携ができていません！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
                 .$google_client->createAuthUrl();
                 }
                 
