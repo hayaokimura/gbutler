@@ -29,8 +29,8 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
-                    $today_flag = (array_intersect($words, ["予定"]) && !array_intersect($words, ["明日"])) || array_intersect($words, ["予定","今日"]);
-                    $tomorrow_flag = array_intersect($words, ["予定","明日"]);
+                    $today_flag = (in_array($words, "予定") && in_array($words, "今日")) || (in_array($words, "予定") && !in_array($words, "明日"));
+                    $tomorrow_flag = in_array($words, "予定") && in_array($words, "明日");
                     if ($today_flag) {
                         $start = strtotime( date("Y/m/d 00:00:00"));
                         $end = strtotime( "+1 day" , $start ) ;
