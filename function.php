@@ -50,10 +50,13 @@ function reply_for_Events($bot, $Events,$google_client){
             }
             
         }elseif ($type == 'follow') {
-            $replyText = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
+            $replyurl = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
                 .$google_client->createAuthUrl();
+            $reply6num = "認証後に表示される６桁の番号をトーク画面に入力してください。"
             $sendMessage = new MultiMessageBuilder();
-            $TextMessageBuilder = new TextMessageBuilder($replyText);
+            $TextMessageBuilder = new TextMessageBuilder($replyurl);
+            $sendMessage->add($TextMessageBuilder);
+            $TextMessageBuilder = new TextMessageBuilder($reply6num);
             $sendMessage->add($TextMessageBuilder);
             $bot->replyMessage($event->getReplyToken(), $sendMessage);
         }elseif ($type == 'unfollow'){
