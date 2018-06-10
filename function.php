@@ -42,7 +42,6 @@ function reply_for_Events($bot, $Events,$google_client){
                         $end = strtotime( "+2 day" , $today ) ;
                         $reply_schedule = schedule($google_client);
                         $replyText = $reply_schedule;
-                    }
                     }else {
                         $replyText = $event->getText();
                     }
