@@ -56,6 +56,9 @@ function reply_for_Events($bot, $Events,$google_client){
             $TextMessageBuilder = new TextMessageBuilder($replyText);
             $sendMessage->add($TextMessageBuilder);
             $bot->replyMessage($event->getReplyToken(), $sendMessage);
+        }elseif ($type == 'unfollow'){
+            $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
+            $user->delete();
         }
         
     }
