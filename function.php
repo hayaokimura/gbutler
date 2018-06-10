@@ -24,11 +24,24 @@ function reply_for_Events($bot, $Events,$google_client){
                     $replyText = "登録が完了しました！";
                 }
                 
-            }elseif ($event->getText() == "予定") {
-                $replyText = "今日の予定をお伝えします。\n今日の予定は";
-            }else {
-                $replyText = $event->getText();
+            }else{
+                $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
+                if ($user) {
+                    if ($event->getText() == "予定") {
+                    $reply_schedule = schedule($google_client);
+                    $replyText = $reply_schedule;
+                    
+                    }else {
+                        $replyText = $event->getText();
+                    }
+                }else{
+                    $replyText = "まだ連携ができていません！\n
+                    こちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
+                .$google_client->createAuthUrl();
+                }
+                
             }
+            
             if (isset($replyText)) {
                 $sendMessage = new MultiMessageBuilder();
                 $TextMessageBuilder = new TextMessageBuilder($replyText);
@@ -47,6 +60,43 @@ function reply_for_Events($bot, $Events,$google_client){
         
     }
 }
+
+function take_calendar($client){
+    $client->getAccessToken();
+    $calendar = new Google_Service_Calendar($client);
+  
+      // 今日の0時0分のUNIX TIMESTAMP
+      $today = strtotime( date("Y/m/d 00:00:00") ) ;
+       
+      // 今日の0時0分($today)から4日後のUNIX TIMESTAMPを取得する
+      $tomorrow = strtotime( "+1 day" , $today ) ;
+      
+      $calendarId = 'primary';
+      $optParams = array(
+        'orderBy' => 'startTime',
+        'singleEvents' => true,
+        'timeMin' => date('c',$today),
+        'timeMax' => date('c',$tomorrow),
+      );
+      $event_list = $calendar->events->listEvents($calendarId, $optParams);
+      $return = null
+      if (empty($event_list->getItems()) {
+          return "今日の予定はありません。";
+      }else{
+          $return = "今日の予定をお伝えします。\n今日の予定は\n";
+          foreach ($event_list->getItems() as $event) {
+            $start = $event->start->dateTime;
+            if (empty($start))$start = $event->start->date;
+            $end = $event->end->dateTime;
+            if (empty($end))$end = $event->end->date;
+            $return .= date("H:i",strtotime($start))."-".date("H:i",strtotime($end))." ".$event->getSummary()."\n";
+          }
+          $return .= "です。今日も頑張っていきましょう！";
+          return $return;
+      }
+      
+}
+
 
 function client_init(){
     $client = new Google_Client();
