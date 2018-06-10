@@ -46,8 +46,8 @@ function reply_for_Events($bot, $Events,$google_client){
                         $today = new DateTime(date("Y/m/d 00:00:00"));
                         $format = "Ymd";
                         $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText());
-                        if ($today > $start) $start = strtotime("+1 year", $today);
-                        $end = strtotime("+1 day", $today);
+                        if ($today > $start) $start = strtotime("+1 year", $today->format('Y-m-d H:i:s'));
+                        $end = strtotime("+1 day", $today->format('Y-m-d H:i:s'));
                     }else {
                         $replyText = $event->getText();
                     }
