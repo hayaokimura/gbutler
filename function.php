@@ -29,7 +29,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
-                    $today_flag = (in_array("予定", $words) && in_array("今日", $words)) || (in_array("予定", $words) && !in_array("明日", $words));
+                    $today_flag = (in_array("予定", $words) && in_array("今日", $words)) || (in_array("予定", $words) && !in_array("明日", $words)) || in_array("今日", $words);
                     $tomorrow_flag = in_array("予定", $words) && in_array("明日", $words);
                     if ($today_flag) {
                         $start = strtotime( date("Y/m/d 00:00:00"));
@@ -42,6 +42,12 @@ function reply_for_Events($bot, $Events,$google_client){
                         $end = strtotime( "+2 day" , $today ) ;
                         $reply_schedule = schedule($google_client,$start,$end);
                         $replyText = $reply_schedule;
+                    }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
+                        $today = new DateTime("Y/m/d 00:00:00");
+                        $format = "Ymd";
+                        $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText());
+                        if ($today > $start) $start = strtotime("+1 year", $today);
+                        $end = strtotime("+1 day", $today);
                     }else {
                         $replyText = $event->getText();
                     }
