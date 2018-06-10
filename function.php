@@ -16,7 +16,15 @@ function reply_for_Events($bot, $Events,$google_client){
     foreach ($Events as $event) {
         $type = $event->getType();
         if ($type == 'message') {
-            if ($event->getText() == "予定") {
+            if (preg_match([0-9]{6,6}, $event->getText())) {
+                $user = ORM::for_table('user')->where("lineid",$event->getText)->find_one();
+                if ($user) {
+                    $user->lineid = $event->userId;
+                    $user->save();
+                    $replyText = "登録が完了しました！";
+                }
+                
+            }elseif ($event->getText() == "予定") {
                 $replyText = "今日の予定をお伝えします。\n今日の予定は";
             }else {
                 $replyText = $event->getText();
