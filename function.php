@@ -29,9 +29,20 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
-                    if (array_intersect($words, ["予定"])) {
+                    $today_flag = array_intersect($words, ["予定"]) || array_intersect($words, ["予定","今日"]);
+                    $tomorrow_flag = array_intersect($words, ["予定","明日"]);
+                    if ($today_flag) {
+                        $start = strtotime( date("Y/m/d 00:00:00");
+                        $end = strtotime( "+1 day" , $today ) ;
+                        $reply_schedule = schedule($google_client,$start,$end);
+                        $replyText = $reply_schedule;
+                    }elseif($tomorrow_flag){
+                        $today = strtotime( date("Y/m/d 00:00:00")
+                        $start = strtotime( "+1 day" , $today );
+                        $end = strtotime( "+2 day" , $today ) ;
                         $reply_schedule = schedule($google_client);
                         $replyText = $reply_schedule;
+                    }
                     }else {
                         $replyText = $event->getText();
                     }
@@ -67,7 +78,7 @@ function reply_for_Events($bot, $Events,$google_client){
     }
 }
 
-function schedule($client){
+function schedule($client,$start,$end){
     $client->getAccessToken();
     $calendar = new Google_Service_Calendar($client);
   
@@ -81,8 +92,8 @@ function schedule($client){
       $optParams = array(
         'orderBy' => 'startTime',
         'singleEvents' => true,
-        'timeMin' => date('c',$today),
-        'timeMax' => date('c',$tomorrow),
+        'timeMin' => date('c',$start),
+        'timeMax' => date('c',$end),
       );
       $event_list = $calendar->events->listEvents($calendarId, $optParams);
       $return = null;
