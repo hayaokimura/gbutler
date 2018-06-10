@@ -74,6 +74,7 @@ if (isset($_GET['code'])) {
   <head>
     <title>gbutler code</title>
     <link rel="stylesheet" type="text/css" href="callback.css" />
+    <meta name="viewport" content="width=device-width">
   </head>
   <body>
       <div class="code" align="center">
