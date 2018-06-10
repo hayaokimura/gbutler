@@ -73,10 +73,14 @@ if (isset($_GET['code'])) {
   <html>
   <head>
     <title>gbutler code</title>
+    <link rel="stylesheet" type="text/css" href="callback.css" />
   </head>
   <body>
-      <div class="code">
-        <?= $lineidbeta ?>
+      <div class="code" align="center">
+        <form>
+            <p>こちらの番号をLINEのトーク画面に入力してください。</p>
+            <input type="text" class="number" value=<?=$lineidbeta?> readonly />
+        </form>
       </div>
   </body>
   </html>

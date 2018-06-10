@@ -52,7 +52,7 @@ function reply_for_Events($bot, $Events,$google_client){
         }elseif ($type == 'follow') {
             $replyurl = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
                 .$google_client->createAuthUrl();
-            $reply6num = "認証後に表示される６桁の番号をトーク画面に入力してください。"
+            $reply6num = "認証後に表示される６桁の番号をトーク画面に入力してください。";
             $sendMessage = new MultiMessageBuilder();
             $TextMessageBuilder = new TextMessageBuilder($replyurl);
             $sendMessage->add($TextMessageBuilder);
