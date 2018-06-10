@@ -29,7 +29,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
-                    $today_flag = array_intersect($words, ["予定"]) || array_intersect($words, ["予定","今日"]);
+                    $today_flag = (array_intersect($words, ["予定"]) && !array_intersect($words, ["明日"])) || array_intersect($words, ["予定","今日"]);
                     $tomorrow_flag = array_intersect($words, ["予定","明日"]);
                     if ($today_flag) {
                         $start = strtotime( date("Y/m/d 00:00:00"));
