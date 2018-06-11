@@ -94,9 +94,13 @@ function schedule($client,$start,$end){
   
       // 今日の0時0分のUNIX TIMESTAMP
       $today = strtotime( date("Y/m/d 00:00:00") ) ;
-       
-      // 今日の0時0分($today)から4日後のUNIX TIMESTAMPを取得する
-      $tomorrow = strtotime( "+1 day" , $today ) ;
+      if ($start == $today) {
+          $date_str = "今日";
+      }elseif ($start == strtotime( "+1 day" , $today )) {
+          $date_str = "明日";
+      }else{
+        $date_str = date("m/d",$start);
+      }
       
       $calendarId = 'primary';
       $optParams = array(
@@ -108,9 +112,9 @@ function schedule($client,$start,$end){
       $event_list = $calendar->events->listEvents($calendarId, $optParams);
       $return = null;
       if (empty($event_list->getItems())) {
-          return "今日の予定はありません。";
+          return $date_str."の予定はありません。";
       }else{
-          $return = "今日の予定をお伝えします。\n今日の予定は\n";
+          $return = $date_str."の予定をお伝えします。\n".$date_str."の予定は\n";
           foreach ($event_list->getItems() as $event) {
             $start = $event->start->dateTime;
             if (empty($start))$start = $event->start->date;
@@ -118,7 +122,7 @@ function schedule($client,$start,$end){
             if (empty($end))$end = $event->end->date;
             $return .= date("H:i",strtotime($start))."-".date("H:i",strtotime($end))." ".$event->getSummary()."\n";
           }
-          $return .= "です。今日も頑張っていきましょう！";
+          $return .= "です。頑張っていきましょう！";
           return $return;
       }
       
