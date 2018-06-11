@@ -21,7 +21,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $user->set('lineid', $event->getUserId());
                     $user->save();
-                    $replyText = "登録が完了しました！";
+                    $replyText = "登録が完了しました！\nはじめまして。googleButlerです。\"今日の予定\"や\"明日の予定\"と入力するとgoogleカレンダーの予定を表示します。;
                 }
                 
             }else{
