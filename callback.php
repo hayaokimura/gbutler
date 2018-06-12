@@ -16,9 +16,8 @@ list($accessToken,$channelSecret) = take_env_var();
 $google_client = client_init();
 DB_init();
 
-if ($argc == 2) {
+if ($argv[1]) {
   //initialize
-  echo "hello";
     $time = date('G');
     $notice_times = ORM::for_table('notice_time')->where("time",$time)->find_many();
     foreach ($$notice_times as $notice_time) {
