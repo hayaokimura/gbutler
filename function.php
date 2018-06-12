@@ -95,6 +95,7 @@ function reply_for_Events($bot, $Events,$google_client){
                         }else{
                             $replyText = "そのような設定はありません。";
                         }
+                        $replyText_array = $replyText;
                     }else {
                         $replyText_array = [$event->getText()];
                     }
