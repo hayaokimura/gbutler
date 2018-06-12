@@ -27,6 +27,7 @@ function reply_for_Events($bot, $Events,$google_client){
             }else{
                 $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
                 if ($user) {
+                    $notice_time = ORM::for_table('notice_time')->where("user_id",$user->id)->where("time",null)->find_one();
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
                     $today_flag = (in_array("予定", $words) && in_array("今日", $words)) || (in_array("予定", $words) && !in_array("明日", $words)) || in_array("今日", $words);
@@ -34,14 +35,12 @@ function reply_for_Events($bot, $Events,$google_client){
                     if ($today_flag) {
                         $start = strtotime( date("Y/m/d 00:00:00"));
                         $end = strtotime( "+1 day" , $start ) ;
-                        $reply_schedule = schedule($google_client,$start,$end);
-                        $replyText = $reply_schedule;
+                        $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif($tomorrow_flag){
                         $today = strtotime( date("Y/m/d 00:00:00"));
                         $start = strtotime( "+1 day" , $today );
                         $end = strtotime( "+2 day" , $today ) ;
-                        $reply_schedule = schedule($google_client,$start,$end);
-                        $replyText = $reply_schedule;
+                        $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
                         $today = new DateTime(date("Y/m/d 00:00:00"));
                         $format = "Ymd";
@@ -52,34 +51,43 @@ function reply_for_Events($bot, $Events,$google_client){
                             $start = $start_datetime->getTimestamp();
                         }
                         $end = strtotime("+1 day", $start_datetime->getTimestamp());
-                        $replyText = schedule($google_client,$start,$end);
+                        $replyText_array = [schedule($google_client,$start,$end)];
+                    }elseif(in_array("設定", $words)){
+                        
+                        if (!$notice_time) {
+                            $notice_time = ORM::for_table('notice_time')->create();
+                            $notice_time->set('user_id',$user->id);
+                            $notice_time->save();
+                        }
+                        $replyText1 = "予定通知時間を設定します。\n当日or翌日のスケジュールを指定時間でお知らせします。当日、翌日に加えて0時から２３時までの時間を指定してください。";
+                        $replyText2 = "例\n・当日の予定を朝８時に知りたいとき\n当日8\n・翌日の予定を夜９時に知りたいとき\n翌日21";
+                        $replyText_array = [$replyText1,$replyText2];
+                    }elseif((in_array("当日", $words)||in_array("翌日", $words)) && $hour = preg_grep("/[0-9]{1,2}/", $words) && $notice_time){
+                        $notice_time->set('time', $hour)
+                        if (in_array("当日", $words)) $notice_time->set('today_or_tomorrow', 0);
+                        elseif(in_array("翌日", $words)) $notice_time->set('today_or_tomorrow', 1);
+                        $notice_time->save();
+                        $replyText = "登録が完了しました。\n毎日".$notice_time->time."時に". ($notice_time->today_or_tomorrow == 0 ? "当日":"翌日")."の予定をお知らせします。";
+                        $replyText_array = [$replyText];
                     }else {
-                        $replyText = $event->getText();
+                        $replyText_array = [$event->getText()];
                     }
                 }else{
-                    $replyText = "まだ連携ができていません！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
-                .$google_client->createAuthUrl();
+                    $replyText_array = ["まだ連携ができていません！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
+                .$google_client->createAuthUrl()];
                 }
                 
-            }
-            
-            if (isset($replyText)) {
-                $sendMessage = new MultiMessageBuilder();
-                $TextMessageBuilder = new TextMessageBuilder($replyText);
-                $sendMessage->add($TextMessageBuilder);
-                $bot->replyMessage($event->getReplyToken(), $sendMessage);
+                if (isset($replyText_array)) reply_message($replyText_array);
+                
+                
             }
             
         }elseif ($type == 'follow') {
             $replyurl = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
                 .$google_client->createAuthUrl();
             $reply6num = "認証後に表示される６桁の番号をトーク画面に入力してください。";
-            $sendMessage = new MultiMessageBuilder();
-            $TextMessageBuilder = new TextMessageBuilder($replyurl);
-            $sendMessage->add($TextMessageBuilder);
-            $TextMessageBuilder = new TextMessageBuilder($reply6num);
-            $sendMessage->add($TextMessageBuilder);
-            $bot->replyMessage($event->getReplyToken(), $sendMessage);
+            $replyText_array = [$replyurl,$reply6num];
+            reply_message($replyText_array);
         }elseif ($type == 'unfollow'){
             $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
             $user->delete();
@@ -99,7 +107,7 @@ function schedule($client,$start,$end){
       }elseif ($start == strtotime( "+1 day" , $today )) {
           $date_str = "明日";
       }else{
-        $date_str = date("m/d",$start);
+        $date_str = date("m月d日",$start);
       }
       
       $calendarId = 'primary';
@@ -126,6 +134,15 @@ function schedule($client,$start,$end){
           return $return;
       }
       
+}
+
+function reply_message($replyText_array){
+    $sendMessage = new MultiMessageBuilder();
+    foreach ($replyText_array  as $replyText) {
+        $TextMessageBuilder = new TextMessageBuilder($replyText);
+        $sendMessage->add($TextMessageBuilder);
+    }
+    $bot->replyMessage($event->getReplyToken(), $sendMessage);
 }
 
 

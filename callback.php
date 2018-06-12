@@ -16,6 +16,13 @@ list($accessToken,$channelSecret) = take_env_var();
 $google_client = client_init();
 DB_init();
 
+if ($argc == 2) {
+  //initialize
+    $httpClient = new CurlHTTPClient($accessToken);
+    $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
+    
+}
+
 if (isset($_SERVER["HTTP_".HTTPHeader::LINE_SIGNATURE])) {
     
     //initialize
