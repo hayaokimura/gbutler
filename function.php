@@ -59,7 +59,7 @@ function reply_for_Events($bot, $Events,$google_client){
                             $notice_time->set('user_id',$user->id);
                             $notice_time->save();
                         }
-                        $notice_times = ORM::for_table('user')->where("lineid",$event->getUserId())->where_not_null("time")->find_meny();
+                        $notice_times = ORM::for_table('user')->where("lineid",$event->getUserId())->where_not_null("time")->find_array();
                         
                         $replyText1 = "予定通知時間を設定します。";
                         if ($notice_times) {
