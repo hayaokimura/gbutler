@@ -77,7 +77,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 .$google_client->createAuthUrl()];
                 }
                 
-                if (isset($replyText_array)) reply_message($replyText_array, $bot);
+                if (isset($replyText_array)) reply_message($replyText_array, $bot,$event);
                 
                 
             }
@@ -87,7 +87,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 .$google_client->createAuthUrl();
             $reply6num = "認証後に表示される６桁の番号をトーク画面に入力してください。";
             $replyText_array = [$replyurl,$reply6num];
-            reply_message($replyText_array, $bot);
+            reply_message($replyText_array, $bot, $event);
         }elseif ($type == 'unfollow'){
             $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
             $user->delete();
@@ -136,7 +136,7 @@ function schedule($client,$start,$end){
       
 }
 
-function reply_message($replyText_array,$bot){
+function reply_message($replyText_array,$bot,$event){
     $sendMessage = new MultiMessageBuilder();
     foreach ($replyText_array  as $replyText) {
         $TextMessageBuilder = new TextMessageBuilder($replyText);
