@@ -18,8 +18,16 @@ DB_init();
 
 if ($argc == 2) {
   //initialize
-    $httpClient = new CurlHTTPClient($accessToken);
-    $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
+    $time = date('G');
+    $notice_times = ORM::for_table('notice_time')->where("time",$time)->find_many();
+    foreach ($$notice_times as $notice_time) {
+      $user = ORM::for_table('user')->find_one($notice_time->user_id);
+      $httpClient = new CurlHTTPClient($accessToken);
+      $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
+      $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('hello');
+      $response = $bot->pushMessage($user->lineid, $textMessageBuilder);
+    }
+    
     
 }
 
