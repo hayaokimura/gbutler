@@ -61,17 +61,19 @@ function reply_for_Events($bot, $Events,$google_client){
                         }
                         $notice_times = ORM::for_table('notice_time')->where("user_id",$user->id)->where_not_null("time")->find_array();
                         
-                        $replyText1 = "予定通知時間を設定します。";
+                        $replyText_array = [];
+                        array_push($replyText_array,"予定通知時間を設定します。");
                         if ($notice_times) {
                             $replyText2 = "現在の設定は\n";
                             foreach ($notice_times as $time)$replyText2 .= ($time->today_or_tomorrow == 0 ? "当日":"翌日").$time->time."\n";
                             $replyText2 = "です。";
+                            array_push($replyText_array, $replyText2);
                         }
                         
                         $replyText3 ="当日or翌日のスケジュールを指定時間でお知らせします。当日、翌日に加えて0時から２３時までの時間を指定してください。";
                         $replyText4 = "例\n・当日の予定を朝８時に知りたいとき\n当日8\n・翌日の予定を夜９時に知りたいとき\n翌日21";
                         $replyText5 = "また、設定を消す場合は\n当日8削除\nなど、設定のあとに\"削除\"と入れてください。";
-                        $replyText_array = [$replyText1,$replyText2];
+                        array_push($replyText_array, $replyText3,$replyText4,$replyText5);
                     }elseif((in_array("当日", $words)||in_array("翌日", $words)) && preg_grep("/[0-9]{1,2}/", $words) && $notice_time){
                         $hour = preg_grep("/[0-9]{1,2}/", $words)[0];
                         if (intval($hour)< 0 || intval($hour) >23) {
