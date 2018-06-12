@@ -59,17 +59,40 @@ function reply_for_Events($bot, $Events,$google_client){
                             $notice_time->set('user_id',$user->id);
                             $notice_time->save();
                         }
-                        $replyText1 = "予定通知時間を設定します。\n当日or翌日のスケジュールを指定時間でお知らせします。当日、翌日に加えて0時から２３時までの時間を指定してください。";
-                        $replyText2 = "例\n・当日の予定を朝８時に知りたいとき\n当日8\n・翌日の予定を夜９時に知りたいとき\n翌日21";
+                        $notice_times = ORM::for_table('user')->where("lineid",$event->getUserId())->where_not_null("time")->find_meny();
+                        
+                        $replyText1 = "予定通知時間を設定します。";
+                        if ($notice_times) {
+                            $replyText2 = "現在の設定は\n";
+                            foreach ($notice_times as $time)$replyText2 .= ($time->today_or_tomorrow == 0 ? "当日":"翌日").$time->time."\n";
+                            $replyText2 = "です。";
+                        }
+                        
+                        $replyText3 ="当日or翌日のスケジュールを指定時間でお知らせします。当日、翌日に加えて0時から２３時までの時間を指定してください。";
+                        $replyText4 = "例\n・当日の予定を朝８時に知りたいとき\n当日8\n・翌日の予定を夜９時に知りたいとき\n翌日21";
+                        $replyText5 = "また、設定を消す場合は\n当日8削除\nなど、設定のあとに\"削除\"と入れてください。";
                         $replyText_array = [$replyText1,$replyText2];
                     }elseif((in_array("当日", $words)||in_array("翌日", $words)) && preg_grep("/[0-9]{1,2}/", $words) && $notice_time){
                         $hour = preg_grep("/[0-9]{1,2}/", $words);
-                        $notice_time->set('time', $hour);
-                        if (in_array("当日", $words)) $notice_time->set('today_or_tomorrow', 0);
-                        elseif(in_array("翌日", $words)) $notice_time->set('today_or_tomorrow', 1);
-                        $notice_time->save();
-                        $replyText = "登録が完了しました。\n毎日".$notice_time->time."時に". ($notice_time->today_or_tomorrow == 0 ? "当日":"翌日")."の予定をお知らせします。";
+                        if (intval($hour)< 0 || intval($hour) >23) {
+                            $replyText = "この時間は無効です。0から23の間で入力してください。";
+                        }else{
+                            $notice_time->set('time', $hour[0]);
+                            if (in_array("当日", $words)) $notice_time->set('today_or_tomorrow', 0);
+                            elseif(in_array("翌日", $words)) $notice_time->set('today_or_tomorrow', 1);
+                            $notice_time->save();
+                            $replyText = "登録が完了しました。\n毎日".$notice_time->time."時に". ($notice_time->today_or_tomorrow == 0 ? "当日":"翌日")."の予定をお知らせします。";
+                        }
+                        
                         $replyText_array = [$replyText];
+                    }elseif((in_array("当日", $words)||in_array("翌日", $words)) && $nums = preg_grep("/[0-9]{1,2}/", $words) && in_array("削除", $words)){
+                        $notice_time_delete = ORM::for_table('notice_time')->where("user_id",$user->id)->where("time",$nums[0])->where("today_or_tomorrow",(in_array("当日", $words)? 0:1)->find_one();
+                        if ($notice_time_delete) {
+                            $notice_time_delete->delete();
+                            $replyText = "設定\"".$event->getText()."\"を削除しました。";
+                        }else{
+                            $replyText = "そのような設定はありません。";
+                        }
                     }else {
                         $replyText_array = [$event->getText()];
                     }
