@@ -66,7 +66,7 @@ function reply_for_Events($bot, $Events,$google_client){
                         if ($notice_times) {
                             $replyText2 = "現在の設定は\n";
                             foreach ($notice_times as $time)$replyText2 .= ($time->today_or_tomorrow == 0 ? "当日":"翌日").$time->time."\n";
-                            $replyText2 = "です。";
+                            $replyText2 .= "です。";
                             array_push($replyText_array, $replyText2);
                         }
                         
