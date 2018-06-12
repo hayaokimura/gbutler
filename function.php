@@ -73,11 +73,11 @@ function reply_for_Events($bot, $Events,$google_client){
                         $replyText5 = "また、設定を消す場合は\n当日8削除\nなど、設定のあとに\"削除\"と入れてください。";
                         $replyText_array = [$replyText1,$replyText2];
                     }elseif((in_array("当日", $words)||in_array("翌日", $words)) && preg_grep("/[0-9]{1,2}/", $words) && $notice_time){
-                        $hour = preg_grep("/[0-9]{1,2}/", $words);
+                        $hour = preg_grep("/[0-9]{1,2}/", $words)[0];
                         if (intval($hour)< 0 || intval($hour) >23) {
                             $replyText = "この時間は無効です。0から23の間で入力してください。";
                         }else{
-                            $notice_time->set('time', $hour[0]);
+                            $notice_time->set('time', $hour);
                             if (in_array("当日", $words)) $notice_time->set('today_or_tomorrow', 0);
                             elseif(in_array("翌日", $words)) $notice_time->set('today_or_tomorrow', 1);
                             $notice_time->save();
