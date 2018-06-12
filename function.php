@@ -27,7 +27,7 @@ function reply_for_Events($bot, $Events,$google_client){
             }else{
                 $user = ORM::for_table('user')->where("lineid",$event->getUserId())->find_one();
                 if ($user) {
-                    $notice_time = ORM::for_table('notice_time')->where("user_id",$user->id)->where("time",null)->find_one();
+                    $notice_time = ORM::for_table('notice_time')->where("user_id",$user->id)->where_null("time")->find_one();
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
                     $today_flag = (in_array("予定", $words) && in_array("今日", $words)) || (in_array("予定", $words) && !in_array("明日", $words)) || in_array("今日", $words);
