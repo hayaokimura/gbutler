@@ -63,7 +63,7 @@ function reply_for_Events($bot, $Events,$google_client){
                         $replyText2 = "例\n・当日の予定を朝８時に知りたいとき\n当日8\n・翌日の予定を夜９時に知りたいとき\n翌日21";
                         $replyText_array = [$replyText1,$replyText2];
                     }elseif((in_array("当日", $words)||in_array("翌日", $words)) && $hour = preg_grep("/[0-9]{1,2}/", $words) && $notice_time){
-                        $notice_time->set('time', $hour)
+                        $notice_time->set('time', $hour);
                         if (in_array("当日", $words)) $notice_time->set('today_or_tomorrow', 0);
                         elseif(in_array("翌日", $words)) $notice_time->set('today_or_tomorrow', 1);
                         $notice_time->save();
