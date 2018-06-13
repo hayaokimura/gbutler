@@ -18,15 +18,32 @@ DB_init();
 
 if ($argv[1]) {
   //initialize
-  var_dump($argv[1]);
     $time = date('G');
     $notice_times = ORM::for_table('notice_time')->where("time",$time)->find_many();
-    foreach ($$notice_times as $notice_time) {
+    foreach ($notice_times as $notice_time) {
       $user = ORM::for_table('user')->find_one($notice_time->user_id);
       $httpClient = new CurlHTTPClient($accessToken);
       $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
-      $textMessageBuilder = new \LINE\LINEBot\MessageBuilder\TextMessageBuilder('hello');
-      $response = $bot->pushMessage($user->lineid, $textMessageBuilder);
+      if ($user) {
+          $token =$google_client->fetchAccessTokenWithRefreshToken($user->refresh_token);
+          if (array_key_exists("refresh_token", $token)) {
+            $google_client->setAccessToken($token);
+          }else{
+            $user->delete();
+            continue;
+          }
+      }
+      if ($notice_time->today_or_tomorrow == 0) {
+          $start = strtotime( date("Y/m/d 00:00:00"));
+          $end = strtotime( "+1 day" , $start ) ;
+          $replyText_array = [schedule($google_client,$start,$end)];
+      }elseif($notice_time->today_or_tomorrow == 1){
+          $today = strtotime( date("Y/m/d 00:00:00"));
+          $start = strtotime( "+1 day" , $today );
+          $end = strtotime( "+2 day" , $today ) ;
+          $replyText_array = [schedule($google_client,$start,$end)];
+      }
+      push_message($replyText_array,$bot,$user);
     }
     
     
