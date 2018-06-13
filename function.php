@@ -21,7 +21,15 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $user->set('lineid', $event->getUserId());
                     $user->save();
-                    $replyText = "登録が完了しました！\nはじめまして。googleButlerです。\"今日の予定\"や\"明日の予定\"と入力するとgoogleカレンダーの予定を表示します。";
+                    $replyText_array = null;
+                    $replyText = "登録が完了しました！\nはじめまして。googleButlerです。googleカレンダーの予定を表示します。";
+                    array_push($replyText_array, $replyText);
+                    $replyText = "今日、明日の予定を知りたい場合は\"今日の予定\"\"明日の予定\"などと入力してください。";
+                    array_push($replyText_array, $replyText);
+                    $replyText = "それ以降の予定は月日を入力してください。\n例えば、６月４日なら\n0604\nのように月、日を並べて４桁の数字で入力してください。";
+                    array_push($replyText_array, $replyText);
+                    $replyText = "このBotは定時に予定をお知らせすることが出来ます。\n詳しい説明は\"設定\"と入力してください。";
+                    array_push($replyText_array, $replyText);
                 }
                 
             }else{
@@ -97,17 +105,23 @@ function reply_for_Events($bot, $Events,$google_client){
                         }
                         $replyText_array = $replyText;
                     }else {
-                        $replyText_array = [$event->getText()];
+                        $replyText_array = null;
+                        $replyText = "今日、明日の予定を知りたい場合は\"今日の予定\"\"明日の予定\"などと入力してください。";
+                        array_push($replyText_array, $replyText);
+                        $replyText = "それ以降の予定は月日を入力してください。\n例えば、６月４日なら\n0604\nのように月、日を並べて４桁の数字で入力してください。";
+                        array_push($replyText_array, $replyText);
+                        $replyText = "このBotは定時に予定をお知らせすることが出来ます。\n詳しい説明は\"設定\"と入力してください。";
+                        array_push($replyText_array, $replyText);
                     }
                 }else{
                     $replyText_array = ["まだ連携ができていません！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
                 .$google_client->createAuthUrl()];
                 }
                 
-                if (isset($replyText_array)) reply_message($replyText_array, $bot,$event);
                 
                 
             }
+            if (isset($replyText_array)) reply_message($replyText_array, $bot,$event);
             
         }elseif ($type == 'follow') {
             $replyurl = "登録ありがとうございます！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"
