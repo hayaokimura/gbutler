@@ -18,6 +18,7 @@ DB_init();
 
 if ($argv[1]) {
   //initialize
+  var_dump($argv[1]);
     $time = date('G');
     $notice_times = ORM::for_table('notice_time')->where("time",$time)->find_many();
     foreach ($$notice_times as $notice_time) {
