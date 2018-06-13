@@ -173,6 +173,16 @@ function reply_message($replyText_array,$bot,$event){
 }
 
 
+function push_message($replyText_array,$bot,$user){
+    $sendMessage = new MultiMessageBuilder();
+    foreach ($replyText_array  as $replyText) {
+        $TextMessageBuilder = new TextMessageBuilder($replyText);
+        $sendMessage->add($TextMessageBuilder);
+    }
+    $bot->pushMessage($user->lineid, $sendMessage);
+}
+
+
 function client_init(){
     $client = new Google_Client();
     $client->setAuthConfig('client_secret.json');
