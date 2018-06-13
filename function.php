@@ -103,7 +103,7 @@ function reply_for_Events($bot, $Events,$google_client){
                         }else{
                             $replyText = "そのような設定はありません。";
                         }
-                        $replyText_array = $replyText;
+                        $replyText_array = [$replyText];
                     }else {
                         $replyText_array = [];
                         $replyText = "今日、明日の予定を知りたい場合は\"今日の予定\"\"明日の予定\"などと入力してください。";
