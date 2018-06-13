@@ -97,9 +97,12 @@ function reply_for_Events($bot, $Events,$google_client){
                         $replyText_array = [$replyText];
                     }elseif((in_array("当日", $words)||in_array("翌日", $words)) && preg_match("/[0-9]{1,2}/", $event->getText(),$hour) && in_array("削除", $words)){
                         $notice_time_delete = ORM::for_table('notice_time')->where("user_id",$user->id)->where("time",$hour[0])->where("today_or_tomorrow",(in_array("当日", $words)? 0:1))->find_one();
+                        if ($notice_time_delete->today_or_tomorrow == 0)$day_str = "当日";
+                        else $day_str = "翌日";
+                        $time = $notice_time_delete->time;
                         if ($notice_time_delete) {
                             $notice_time_delete->delete();
-                            $replyText = "設定\"".$event->getText()."\"を削除しました。";
+                            $replyText = "設定\"".$day_str.$time."時\"を削除しました。";
                         }else{
                             $replyText = "そのような設定はありません。";
                         }
