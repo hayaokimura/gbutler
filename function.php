@@ -197,9 +197,11 @@ function client_init(){
 }
 
 function DB_init(){
+    $db_json = file_get_contents("db_env.json");
+    $db = json_decode($db_json);
     ORM::configure('mysql:host=localhost;dbname=gbutler');
-    ORM::configure('username', 'gbutler');
-    ORM::configure('password', 'pR1mCvFCnSd4bMFk');
+    ORM::configure('username', $db->username);
+    ORM::configure('password', $db->password);
     ORM::configure('driver_options', [
         PDO::MYSQL_ATTR_INIT_COMMAND       => 'SET NAMES utf8',
         PDO::ATTR_EMULATE_PREPARES         => false,
