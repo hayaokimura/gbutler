@@ -51,8 +51,8 @@ function reply_for_Events($bot, $Events,$google_client){
                         $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
                         $today = new DateTime(date("Y/m/d 00:00:00"));
-                        $format = "Ymd";
-                        $start_datetime = DateTime::createFromFormat($format, $today->format('Y').$event->getText());
+                        $format = "YmdHis";
+                        $start_datetime = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
                         if ($today > $start_datetime) {
                             $start = strtotime("+1 year", $start_datetime->getTimestamp());
                         }else{
