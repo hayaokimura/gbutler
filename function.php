@@ -102,13 +102,7 @@ function reply_for_Events($bot, $Events,$google_client){
                         }
                         $replyText_array = [$replyText];
                     }else {
-                        $replyText_array = [];
-                        $replyText = "今日、明日の予定を知りたい場合は\"今日の予定\"\"明日の予定\"などと入力してください。";
-                        array_push($replyText_array, $replyText);
-                        $replyText = "それ以降の予定は月日を入力してください。\n例えば、６月４日なら\n0604\nのように月、日を並べて４桁の数字で入力してください。";
-                        array_push($replyText_array, $replyText);
-                        $replyText = "このBotは定時に予定をお知らせすることが出来ます。\n詳しい説明は\"設定\"と入力してください。";
-                        array_push($replyText_array, $replyText);
+                        $replyText_array = $replytexts->reply_else;
                     }
                 }else{
                     $replyText_array = ["まだ連携ができていません！\nこちらのurlをクリックしてgoogleアカウント認証をお願いします。\n"

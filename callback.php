@@ -17,10 +17,8 @@ $google_client = client_init();
 DB_init();
 
 if ($argv[1]) {
-  //initialize
     $now_timestamp = time();
-    if ($now_timestamp%3600 > 30*60)$now_timestamp += 30*60;
-    $hour = date('G', $now_timestamp);
+    if ($now_timestamp%3600 > 30*60)　$hour = date('G', $now_timestamp += 30*60);
     $notice_times = ORM::for_table('notice_time')->where("time",$hour)->find_many();
     foreach ($notice_times as $notice_time) {
       $user = null;
