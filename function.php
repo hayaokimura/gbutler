@@ -51,7 +51,8 @@ function reply_for_Events($bot, $Events,$google_client){
                         $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
                         if ($today > $start) $start->modify('+1 year');
                         }
-                        $end = (clone $start)->modify('+1 day');
+                        $end = clone $start
+                        $end->modify('+1 day');
                         $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
                     }elseif(in_array("設定", $words)){
                         
