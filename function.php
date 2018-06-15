@@ -50,7 +50,6 @@ function reply_for_Events($bot, $Events,$google_client){
                         $format = "YmdHis";
                         $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
                         if ($today > $start) $start->modify('+1 year');
-                        }
                         $end = clone $start;
                         $end->modify('+1 day');
                         $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
