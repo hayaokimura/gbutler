@@ -44,7 +44,7 @@ if ($argv[1]) {
           $start->modify('+1 day');
           $end->modify('+2 day');
       }
-      $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
+      $replyText_array = [schedule($google_client,$start,$end)];
       push_message($replyText_array,$bot,$user);
     }
     

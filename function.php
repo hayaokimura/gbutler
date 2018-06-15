@@ -41,18 +41,18 @@ function reply_for_Events($bot, $Events,$google_client){
                     $end = new DateTime(date("Y/m/d 00:00:00"));
                     if ($today_flag) {
                         $end->modify('+1 day') ;
-                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
+                        $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif($tomorrow_flag){
                         $start->modify('+1 day') ;
                         $end->modify('+2 day') ;
-                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
+                        $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
                         $format = "YmdHis";
                         $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
                         if ($today > $start) $start->modify('+1 year');
                         $end = clone $start;
                         $end->modify('+1 day');
-                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
+                        $replyText_array = [schedule($google_client,$start,$end)];
                     }elseif(in_array("設定", $words)){
                         
                         if (!$notice_time) {
@@ -132,21 +132,21 @@ function schedule($client,$start,$end){
     $calendar = new Google_Service_Calendar($client);
   
       // 今日の0時0分のUNIX TIMESTAMP
-      $today = strtotime( date("Y/m/d 00:00:00") ) ;
+      $today = new DateTime( date("Y/m/d 00:00:00") ) ;
       if ($start == $today) {
           $date_str = "今日";
       }elseif ($start == strtotime( "+1 day" , $today )) {
           $date_str = "明日";
       }else{
-        $date_str = date("m月d日",$start);
+        $date_str = $start->format("m月d日");
       }
       
       $calendarId = 'primary';
       $optParams = array(
         'orderBy' => 'startTime',
         'singleEvents' => true,
-        'timeMin' => date('c',$start),
-        'timeMax' => date('c',$end),
+        'timeMin' => $start->format('c'),
+        'timeMax' => $end->format('c'),
       );
       $event_list = $calendar->events->listEvents($calendarId, $optParams);
       $return = null;
