@@ -18,8 +18,10 @@ DB_init();
 
 if ($argv[1]) {
   //initialize
-    $time = date('G');
-    $notice_times = ORM::for_table('notice_time')->where("time",$time)->find_many();
+    $now_timestamp = time();
+    if ($now_timestamp%3600 > 30*60)$now_timestamp += 30*60;
+    $hour = date('G', $now_timestamp);
+    $notice_times = ORM::for_table('notice_time')->where("time",$hour)->find_many();
     foreach ($notice_times as $notice_time) {
       $user = ORM::for_table('user')->find_one($notice_time->user_id);
       $httpClient = new CurlHTTPClient($accessToken);
