@@ -25,6 +25,8 @@ if ($argv[1]) {
     foreach ($notice_times as $notice_time) {
       $user = null;
       $user = ORM::for_table('user')->where('id',$notice_time->user_id)->find_one();
+      $google_client = client_init();
+      
       $httpClient = new CurlHTTPClient($accessToken);
       $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
       if ($user) {
