@@ -40,12 +40,11 @@ if ($argv[1]) {
       $end = new DateTime(date("Y/m/d 00:00:00"));
       if ($notice_time->today_or_tomorrow == 0) {
           $end->modify('+1 day');
-          $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
       }elseif($notice_time->today_or_tomorrow == 1){
           $start->modify('+1 day');
           $end->modify('+2 day');
-          $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
       }
+      $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
       push_message($replyText_array,$bot,$user);
     }
     
