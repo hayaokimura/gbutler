@@ -24,7 +24,7 @@ if ($argv[1]) {
     $notice_times = ORM::for_table('notice_time')->where("time",$hour)->find_many();
     foreach ($notice_times as $notice_time) {
       $user = null;
-      $user = ORM::for_table('user')->find_one($notice_time->user_id);
+      $user = ORM::for_table('user')->where('id',$notice_time->user_id)->find_one();
       $httpClient = new CurlHTTPClient($accessToken);
       $bot = new LINEBot($httpClient,['channelSecret' => $channelSecret]);
       if ($user) {
