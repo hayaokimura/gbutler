@@ -36,15 +36,15 @@ if ($argv[1]) {
             continue;
           }
       }
+      $start = new DateTime(date("Y/m/d 00:00:00"));
+      $end = new DateTime(date("Y/m/d 00:00:00"));
       if ($notice_time->today_or_tomorrow == 0) {
-          $start = strtotime( date("Y/m/d 00:00:00"));
-          $end = strtotime( "+1 day" , $start ) ;
-          $replyText_array = [schedule($google_client,$start,$end)];
+          $end->modify('+1 day');
+          $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
       }elseif($notice_time->today_or_tomorrow == 1){
-          $today = strtotime( date("Y/m/d 00:00:00"));
-          $start = strtotime( "+1 day" , $today );
-          $end = strtotime( "+2 day" , $today ) ;
-          $replyText_array = [schedule($google_client,$start,$end)];
+          $start->modify('+1 day');
+          $end->modify('+2 day');
+          $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
       }
       push_message($replyText_array,$bot,$user);
     }
