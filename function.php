@@ -13,6 +13,8 @@ function take_env_var(){
 }
 
 function reply_for_Events($bot, $Events,$google_client){
+    $replytexts_json = file_get_contents("replytexts.json");
+    $replytexts = json_decode($replytexts_json);
     foreach ($Events as $event) {
         $type = $event->getType();
         if ($type == 'message') {
@@ -21,15 +23,7 @@ function reply_for_Events($bot, $Events,$google_client){
                 if ($user) {
                     $user->set('lineid', $event->getUserId());
                     $user->save();
-                    $replyText_array = [];
-                    $replyText = "登録が完了しました！\nはじめまして。googleButlerです。googleカレンダーの予定を表示します。";
-                    array_push($replyText_array, $replyText);
-                    $replyText = "今日、明日の予定を知りたい場合は\"今日の予定\"\"明日の予定\"などと入力してください。";
-                    array_push($replyText_array, $replyText);
-                    $replyText = "それ以降の予定は月日を入力してください。\n例えば、６月４日なら\n0604\nのように月、日を並べて４桁の数字で入力してください。";
-                    array_push($replyText_array, $replyText);
-                    $replyText = "このBotは定時に予定をお知らせすることが出来ます。\n詳しい説明は\"設定\"と入力してください。";
-                    array_push($replyText_array, $replyText);
+                    $replyText_array = $replytexts->complete_register;
                 }
                 
             }else{
