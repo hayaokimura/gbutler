@@ -32,28 +32,27 @@ function reply_for_Events($bot, $Events,$google_client){
                     $notice_time = ORM::for_table('notice_time')->where("user_id",$user->id)->where_null("time")->find_one();
                     $mecab = new MeCab_Tagger();
                     $words = $mecab->split($event->getText());
+                    
                     $today_flag = (in_array("予定", $words) && in_array("今日", $words)) || (in_array("予定", $words) && !in_array("明日", $words)) || in_array("今日", $words);
                     $tomorrow_flag = in_array("予定", $words) && in_array("明日", $words);
+                    
+                    $today = new DateTime(date("Y/m/d 00:00:00"));
+                    $start = new DateTime(date("Y/m/d 00:00:00"));
+                    $end = new DateTime(date("Y/m/d 00:00:00"));
                     if ($today_flag) {
-                        $start = strtotime( date("Y/m/d 00:00:00"));
-                        $end = strtotime( "+1 day" , $start ) ;
-                        $replyText_array = [schedule($google_client,$start,$end)];
+                        $end->modify('+1 day') ;
+                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
                     }elseif($tomorrow_flag){
-                        $today = strtotime( date("Y/m/d 00:00:00"));
-                        $start = strtotime( "+1 day" , $today );
-                        $end = strtotime( "+2 day" , $today ) ;
-                        $replyText_array = [schedule($google_client,$start,$end)];
+                        $start->modify('+1 day') ;
+                        $end->modify('+2 day') ;
+                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
                     }elseif(preg_match('/[0-9]{4,4}/', $event->getText())){
-                        $today = new DateTime(date("Y/m/d 00:00:00"));
                         $format = "YmdHis";
-                        $start_datetime = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
-                        if ($today > $start_datetime) {
-                            $start = strtotime("+1 year", $start_datetime->getTimestamp());
-                        }else{
-                            $start = $start_datetime->getTimestamp();
+                        $start = DateTime::createFromFormat($format, $today->format('Y').$event->getText()."000000");
+                        if ($today > $start) $start->modify('+1 year');
                         }
-                        $end = strtotime("+1 day", $start_datetime->getTimestamp());
-                        $replyText_array = [schedule($google_client,$start,$end)];
+                        $end = (clone $start)->modify('+1 day');
+                        $replyText_array = [schedule($google_client,$start->getTimestamp(),$end->getTimestamp())];
                     }elseif(in_array("設定", $words)){
                         
                         if (!$notice_time) {
